@@ -16,14 +16,14 @@ console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
 def test_login():
-    with vcr.use_cassette('fixtures/login-out.yaml', filter_post_data_parameters=['name', 'code']):
+    with vcr.use_cassette('../fixtures/login-out.yaml', filter_post_data_parameters=['name', 'code']):
         sess = IIIAccount(name, barcode)
         #These should raise errors if login fails.
         sess.login()
         sess.logout()
 
 def test_login_bad():
-    with vcr.use_cassette('fixtures/login-bad.yaml', filter_post_data_parameters=['name', 'code']):
+    with vcr.use_cassette('../fixtures/login-bad.yaml', filter_post_data_parameters=['name', 'code']):
         ( name, barcode ) = ( 'foo', 'bar' )
         sess = IIIAccount( name, barcode )
         exception = None
@@ -34,7 +34,7 @@ def test_login_bad():
         assert exception == 'Login failed.'
 
 def test_get_checkouts():
-    with vcr.use_cassette('fixtures/checkouts.yaml', filter_post_data_parameters=['name', 'code']):
+    with vcr.use_cassette('../fixtures/checkouts.yaml', filter_post_data_parameters=['name', 'code']):
         sess = IIIAccount(name, barcode)
         sess.login()
         checkouts = sess.get_checkouts()
@@ -42,7 +42,7 @@ def test_get_checkouts():
         sess.logout()
 
 def test_complete_hold():
-    with vcr.use_cassette('fixtures/grad-hold-open-circ.yaml', filter_post_data_parameters=['name', 'code']):
+    with vcr.use_cassette('../fixtures/grad-hold-open-circ.yaml', filter_post_data_parameters=['name', 'code']):
         sess = IIIAccount(name, barcode)
         sess.login()
         bib = 'b2305331'
@@ -55,7 +55,7 @@ def test_complete_hold():
         sess.logout()
 
 def test_get_holds():
-    with vcr.use_cassette('fixtures/get-holds.yaml', filter_post_data_parameters=['name', 'code']):
+    with vcr.use_cassette('../fixtures/get-holds.yaml', filter_post_data_parameters=['name', 'code']):
         sess = IIIAccount(name, barcode)
         sess.login()
         existing_holds = sess.get_holds()
@@ -64,7 +64,7 @@ def test_get_holds():
 
 def test_cancel_hold():
     cancel_key = 'canceli11425642x00'
-    with vcr.use_cassette('fixtures/cancel-single-hold.yaml', filter_post_data_parameters=['name', 'code']):
+    with vcr.use_cassette('../fixtures/cancel-single-hold.yaml', filter_post_data_parameters=['name', 'code']):
         sess = IIIAccount(name, barcode)
         sess.login()
         canceled = sess.cancel_hold(cancel_key)
@@ -73,7 +73,7 @@ def test_cancel_hold():
 
 
 def test_denied_hold():
-    with vcr.use_cassette('fixtures/undergrad-hold-denied-open-circ.yaml', filter_post_data_parameters=['name', 'code']):
+    with vcr.use_cassette('../fixtures/undergrad-hold-denied-open-circ.yaml', filter_post_data_parameters=['name', 'code']):
         sess = IIIAccount(name, barcode)
         sess.login()
         bib = 'b2305331'
