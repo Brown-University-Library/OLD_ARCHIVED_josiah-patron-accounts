@@ -1,6 +1,6 @@
 #Josiah patron accounts
 
-This is exploratory code in an attempt to allow Josiah patron account features in another application - easyArticle, VuFind, Blacklight, etc.
+This is exploratory code in an attempt to allow [Josiah](http://josiah.brown.edu/) patron account features in another application - easyArticle, VuFind, Blacklight, etc.
 
 ## Development
 
