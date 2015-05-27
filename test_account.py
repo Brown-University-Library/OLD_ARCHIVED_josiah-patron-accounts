@@ -37,6 +37,7 @@ def test_login():
         sess.login()
         sess.logout()
 
+
 #For now - this is expected to fail.
 @pytest.mark.xfail
 @bul_vcr.use_cassette('login-bad.yaml')
@@ -51,6 +52,7 @@ def test_login_bad():
             exception = repr(e)
         assert exception == 'Login failed.'
 
+
 @bul_vcr.use_cassette('checkouts.yaml')
 def test_get_checkouts():
     with vcr.use_cassette('../fixtures/checkouts.yaml', filter_post_data_parameters=['name', 'code']):
@@ -59,6 +61,7 @@ def test_get_checkouts():
         checkouts = sess.get_checkouts()
         assert "Z695.Z8 F373 2010" in [i['call_number'] for i in checkouts]
         sess.logout()
+
 
 @bul_vcr.use_cassette('grad-hold-open-circ.yaml')
 def test_complete_hold():
@@ -83,6 +86,7 @@ def test_get_holds():
         existing_holds = sess.get_holds()
         assert existing_holds[0]['key'] == 'canceli11425642x00'
         sess.logout()
+
 
 @bul_vcr.use_cassette('cancel-single-hold.yaml')
 def test_cancel_hold():
@@ -109,7 +113,6 @@ def test_denied_hold():
         assert hold['confirmed'] == False
         assert hold['message'] == "No requestable items are available"
         sess.logout()
-
 
 
 if __name__ == "__main__":
