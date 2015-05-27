@@ -1,0 +1,4 @@
+pyquery==1.2.9
+pytest==2.7.0
+requests==2.7.0
+vcrpy==1.5.2
