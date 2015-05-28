@@ -21,7 +21,7 @@ logger.addHandler(console_handler)
 
 # Custom VCR config.
 bul_vcr = vcr.VCR(
-    cassette_library_dir = os.environ.get('iii_acc__FIXTURE_DIR', 'fixtures'),
+    cassette_library_dir = os.environ.get('iii_acc_FIXTURE_DIR', 'fixtures'),
     filter_post_data_parameters=['name', 'code'],
     # This prevents new HTTP requests.  Comment or remove to record
     # new fixtures.
