@@ -12,7 +12,7 @@ name, barcode = ( os.environ[u'iii_TEST_NAME'], os.environ[u'iii_TEST_BARCODE'] 
 
 # Show logging
 import logging
-formatter = logging.Formatter(u'%(asctime)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(u'%(asctime)s - %(levelname)s - %(funcName)s()::%(lineno)d - %(message)s')
 logger = logging.getLogger('iii_account')
 logger.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
