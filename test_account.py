@@ -37,8 +37,6 @@ def test_login():
     sess.logout()
 
 
-#For now - this is expected to fail.
-@pytest.mark.xfail
 @bul_vcr.use_cassette('login-bad.yaml')
 def test_login_bad():
     ( name, barcode ) = ( 'foo', 'bar' )
@@ -48,7 +46,7 @@ def test_login_bad():
         sess.login()  # should raise error
     except Exception as e:
         exception = repr(e)
-    assert exception == 'Login failed.'
+    assert exception == "Exception('Login failed.',)"
 
 
 @bul_vcr.use_cassette('checkouts.yaml')
