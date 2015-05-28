@@ -1,6 +1,8 @@
 import logging
+import pprint
 import requests
 import time
+from bs4 import BeautifulSoup
 from pyquery import PyQuery as pq
 
 OPAC_BASE_URL = 'https://josiah.brown.edu/'
@@ -39,10 +41,8 @@ class IIIAccount():
                'url': None}
         url = self.opac_url + 'patroninfo'
         rsp = self.session.post(url, data=payload, allow_redirects=True)
-        content = rsp.content
-        doc = pq(rsp.content)
-        # Span.login_error will also appear in content if login fails.
-        login_error = doc('span.login_error').val()
+        doc = BeautifulSoup( rsp.content.decode('utf-8') )
+        login_error = doc.find( "span", class_="login_error" )  # <span class="login_error"> exists if login fails
         if (login_error):
             raise Exception("Login failed.")
         else:
@@ -52,7 +52,7 @@ class IIIAccount():
             out['patron_id'] = url.split('/')[-2]
             self.patron_id = out['patron_id']
             log.info("Patron {} authenticated.".format({self.patron_id}))
-            return out
+        return out
 
     def logout(self):
         """
@@ -67,7 +67,6 @@ class IIIAccount():
     def _validate_session(self, content):
         if 'your validation has expired' in content.lower():
             raise Exception("Validation expired.")
-
 
     def get_holds(self):
         """
@@ -290,7 +289,6 @@ class IIIAccount():
         self._validate_session(content)
         check_outs = self._parse_checkouts(content)
         return check_outs
-
 
     def _parse_checkouts(self, content):
         """
