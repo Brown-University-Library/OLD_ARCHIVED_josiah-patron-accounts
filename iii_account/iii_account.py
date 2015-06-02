@@ -138,26 +138,22 @@ class IIIAccount():
         r = requests.post(url,
                           data=payload,
                           cookies=self.cookies)
-        doc = pq(r.content)
-        rows =  doc('tr.bibItemsEntry')
+        doc = BeautifulSoup( r.content.decode('utf-8', 'replace') )
+        rows = doc.find_all( 'tr', class_='bibItemsEntry' )
         out = []
         for r in rows:
             _k = {}
-            cells = r.cssselect('td')
+            cells = r.select( 'td' )
             try:
-                item_num = cells[0].cssselect('input[type="radio"]')[0].attrib['value']
+                item_num = unicode( cells[0].select('input[type="radio"]')[0]['value'] )
             except IndexError:
                 item_num = None
-            item, loc, call, status, barcode = tuple([c.text_content().strip().replace('\n', '') for c in cells])
+            item, loc, call, status, barcode = tuple([c.get_text(strip=True) for c in cells])
             _k['id'] = item_num
             _k['location'] = loc
             _k['callnumber'] = call
             _k['status'] = status
-            #_k['barcode'] = barcode
-            #print i.value
-            #print i.text
             out.append(_k)
-        log.debug( 'out, {}'.format(out) )
         return out
 
     # def get_items(self, bib):
