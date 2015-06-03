@@ -176,17 +176,17 @@ class IIIAccount():
         """
         Helper for parsing confirmation screen.
         """
+        content = content if ( type(content) == unicode ) else content.decode( 'utf-8', 'replace' )
         out = {
-           'confirmed': False,
-           'message': None
-           }
-        doc = pq(content)
+            'confirmed': False,
+            'message': None }
+        doc = BeautifulSoup( content )
         try:
-            msg = doc('.style1')[0].text_content().encode('utf-8')
+            msg = unicode( doc.find_all( 'span', class_='style1' )[0] )
         except IndexError:
-            msg = doc('p font[color="red"]').text()
-            out['message'] = msg
             #These are failures.
+            msg = doc.find( 'font', attrs={'color': 'red', 'size': '+2'} ).get_text( strip=True )
+            out['message'] = msg
             return out
         try:
             msg.index('was successful')
