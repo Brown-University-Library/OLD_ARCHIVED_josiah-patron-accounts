@@ -106,5 +106,16 @@ def test_denied_hold():
     sess.logout()
 
 
+@bul_vcr.use_cassette('grad-hold-open-circ.yaml')
+def test_get_items():
+    sess = IIIAccount(name, barcode)
+    sess.login()
+    bib = 'b2305331'
+    # Get the items available for requesting.
+    items = sess.get_items(bib)
+    assert items == [{'callnumber': 'PS3568.U812 R57x 1994', 'id': 'i11425642', 'location': 'ROCK', 'status': 'AVAILABLE'}]
+    sess.logout()
+
+
 if __name__ == "__main__":
     raise Exception("Run with py.test.")
