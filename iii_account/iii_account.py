@@ -244,27 +244,10 @@ class IIIAccount():
     def cancel_all_holds(self):
         """
         Cancel all of a patron's holds.
+        TODO: write test and re-implement.
+        Initial implementation at <https://github.com/Brown-University-Library/josiah-patron-accounts/blob/6ca4280ec46c7a91584ca7e994faeb9dd1c87203/iii_account/iii_account.py>
         """
-        payload = {
-                   'currentsortorder':'current_pickup',
-                   'currentsortorder':'current_pickup',
-                   'cancelall':'YES'
-                }
-
-        out = {}
-        out['cancelled'] = False
-
-        url = self.opac_url + 'patroninfo~S7/%s/holds' % self.patron_id
-        r = requests.post(url,
-                          data=payload,
-                          cookies=self.cookies)
-        doc = pq(r.content)
-        no = doc('#patron_functions').text()
-        if no.rfind('No holds found'):
-            out['cancelled'] = True
-            return out
-        else:
-            return out
+        pass
 
     def get_checkouts(self):
         """
