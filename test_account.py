@@ -91,6 +91,15 @@ def test_cancel_hold():
     sess.logout()
 
 
+@bul_vcr.use_cassette('cancel-all-holds.yaml')
+def test_cancel_all_holds():
+    sess = IIIAccount(name, barcode)
+    sess.login()
+    canceled = sess.cancel_all_holds()
+    assert canceled == { 'cancelled': True }
+    sess.logout()
+
+
 @bul_vcr.use_cassette('undergrad-hold-denied-open-circ.yaml')
 def test_denied_hold():
     sess = IIIAccount(name, barcode)
