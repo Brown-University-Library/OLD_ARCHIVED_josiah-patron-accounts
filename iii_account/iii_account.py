@@ -95,29 +95,6 @@ class IIIAccount():
                 'cancel_by': row.select('.patFuncCancel')[0].get_text(strip=True), } )
         return holds
 
-    # def _parse_holds_list(self, content):
-    #     """
-    #     Private method for parsing hold response.
-    #     """
-    #     doc = pq(content)
-    #     hold_rows = doc('.patFuncEntry')
-    #     def _get(chunk, selector):
-    #         """
-    #         little util to get text by css selector.
-    #         """
-    #         return chunk.cssselect('td.%s' % selector)[0].text_content().strip()
-    #     holds = [
-    #         {
-    #              'key': row.cssselect('input')[0].attrib['id'],
-    #              'title': _get(row, 'patFuncTitle'),
-    #              'status': _get(row, 'patFuncStatus'),
-    #              'pickup': _get(row, 'patFuncPickup'),
-    #              'cancel_by': _get(row, 'patFuncCancel')
-    #         }
-    #         for row in hold_rows
-    #     ]
-    #     return holds
-
     def get_items(self, bib):
         """
         Get the item numbers linked to a bib record.  If no item number is
@@ -155,47 +132,6 @@ class IIIAccount():
             _k['status'] = status
             out.append(_k)
         return out
-
-    # def get_items(self, bib):
-    #     """
-    #     Get the item numbers linked to a bib record.  If no item number is
-    #     returned, this item isn't requestable.
-    #     """
-    #     url = self.request_base.replace('{{bib}}', bib)
-    #     payload = {
-    #         'name' : self.name,
-    #         'code' : self.barcode,
-    #         'pat_submit':'xxx',
-    #         'neededby_Month': '2',
-    #         'neededby_Day': '1',
-    #         'neededby_Year': '2011',
-    #         'submit': 'SUBMIT',
-    #         'loc': 'ROCK',
-    #         #inum is optional
-    #     }
-    #     r = requests.post(url,
-    #                       data=payload,
-    #                       cookies=self.cookies)
-    #     doc = pq(r.content)
-    #     rows =  doc('tr.bibItemsEntry')
-    #     out = []
-    #     for r in rows:
-    #         _k = {}
-    #         cells = r.cssselect('td')
-    #         try:
-    #             item_num = cells[0].cssselect('input[type="radio"]')[0].attrib['value']
-    #         except IndexError:
-    #             item_num = None
-    #         item, loc, call, status, barcode = tuple([c.text_content().strip().replace('\n', '') for c in cells])
-    #         _k['id'] = item_num
-    #         _k['location'] = loc
-    #         _k['callnumber'] = call
-    #         _k['status'] = status
-    #         #_k['barcode'] = barcode
-    #         #print i.value
-    #         #print i.text
-    #         out.append(_k)
-    #     return out
 
     def place_hold(self, bib, item, pickup_location="ROCK"):
         """
