@@ -266,21 +266,22 @@ class IIIAccount():
         """
         Parse a given user's current checkouts.
         """
-        doc = pq(content)
-        t_rows = doc('.patFuncEntry')
+        content = content if type(content) == unicode else content.decode( 'utf-8', 'replace' )
+        doc = BeautifulSoup( content )
+        t_rows = doc.find_all( 'tr', class_='patFuncEntry' )
         def _get(chunk, selector):
             """
             little util to get text by css selector.
             """
-            return chunk.cssselect('td.%s' % selector)[0].text_content().strip()
+            return chunk.select('td.%s' % selector)[0].get_text(strip=True)
         checkouts = [
             {
-                 'key': row.cssselect('input')[0].attrib['id'],
-                 'item': row.cssselect('input')[0].attrib['value'],
-                 'title': _get(row, 'patFuncTitle'),
-                 'barcode': _get(row, 'patFuncBarcode'),
-                 'status': _get(row, 'patFuncStatus'),
-                 'call_number': _get(row, 'patFuncCallNo'),
+                'key': unicode( row.select('input[id]')[0]['id'] ),
+                'item': unicode( row.select('input[value]')[0]['value'] ),
+                'title': _get(row, 'patFuncTitle'),
+                'barcode': _get(row, 'patFuncBarcode'),
+                'status': _get(row, 'patFuncStatus'),
+                'call_number': _get(row, 'patFuncCallNo'),
             }
             for row in t_rows
         ]
