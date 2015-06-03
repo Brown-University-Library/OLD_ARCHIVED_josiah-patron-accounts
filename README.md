@@ -11,5 +11,5 @@ Running tests with py.test and showing ouput: `py.test -s`.
 
 ##Issues and ToDos
 
- * HTML parsing is currently done with pyquery.  This will be replaced with BeautifulSoup4.
+ * HTML parsing is currently done with pyquery.  This will be replaced with [BeautifulSoup4](https://pypi.python.org/pypi/beautifulsoup4).
  * Test with various user types (student, grad student, faculty, etc)
