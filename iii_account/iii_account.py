@@ -316,9 +316,9 @@ class IIIAccount():
         """
         #https://josiah.brown.edu/patroninfo~S7/x/overdues
         url = self.opac_url + 'patroninfo/%s/overdues' % self.patron_id
-        r = requests.get(url,
-                         cookies=self.cookies)
-        doc = pq(r.content)
+        rsp = self.session.get(url)
+        log.debug( 'content, ```{}```'.format(rsp.content) )
+        doc = pq(rsp.content)
         out = {}
         out['total'] = doc('.patFuncFinesTotalAmt').text()
         fines = doc('table.patFunc tr')
@@ -342,4 +342,39 @@ class IIIAccount():
                 amount = None
 
         out['fines'] = fine_data
+        log.debug( 'out, `{}`'.format(pprint.pformat(out)) )
         return out
+
+    # def get_fines(self):
+    #     """
+    #     Parse the odd fines table.
+    #     """
+    #     #https://josiah.brown.edu/patroninfo~S7/x/overdues
+    #     url = self.opac_url + 'patroninfo/%s/overdues' % self.patron_id
+    #     r = requests.get(url,
+    #                      cookies=self.cookies)
+    #     doc = pq(r.content)
+    #     out = {}
+    #     out['total'] = doc('.patFuncFinesTotalAmt').text()
+    #     fines = doc('table.patFunc tr')
+    #     label = None
+    #     amount = None
+    #     fine_data = []
+    #     #Skipping first row since it's a header and last row because it's the
+    #     #total
+    #     for fine in fines[1:-1]:
+    #         val = doc(fine).text()
+    #         if val.rfind('$') > -1:
+    #             amount = val
+    #         else:
+    #             label = val
+
+    #         if label and amount:
+    #             fine_data.append(
+    #                              {'label': label,
+    #                              'amount': amount})
+    #             label = None
+    #             amount = None
+
+    #     out['fines'] = fine_data
+    #     return out
