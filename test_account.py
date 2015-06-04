@@ -117,14 +117,5 @@ def test_get_items():
     sess.logout()
 
 
-@bul_vcr.use_cassette('get-fines.yaml')
-def test_get_fines():
-    sess = IIIAccount(name, barcode)
-    sess.login()
-    fines = sess.get_fines()
-    assert [ 'fines', 'total' ] == sorted( fines.keys() )
-    sess.logout()
-
-
 if __name__ == "__main__":
     raise Exception("Run with py.test.")
