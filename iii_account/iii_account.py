@@ -3,7 +3,6 @@ import pprint
 import requests
 import time
 from bs4 import BeautifulSoup
-from pyquery import PyQuery as pq
 
 OPAC_BASE_URL = 'https://josiah.brown.edu/'
 
