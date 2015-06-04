@@ -129,6 +129,8 @@ class IIIAccount():
             _k['location'] = loc
             _k['callnumber'] = call
             _k['status'] = status
+            _k['barcode'] = barcode
+            _k['barcode_contiguous'] = barcode.replace( u' ', u'' )
             out.append(_k)
         return out
 
