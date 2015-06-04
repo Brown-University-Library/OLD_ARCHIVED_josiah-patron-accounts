@@ -3,7 +3,6 @@ import pprint
 import requests
 import time
 from bs4 import BeautifulSoup
-from pyquery import PyQuery as pq
 
 OPAC_BASE_URL = 'https://josiah.brown.edu/'
 
@@ -95,29 +94,6 @@ class IIIAccount():
                 'cancel_by': row.select('.patFuncCancel')[0].get_text(strip=True), } )
         return holds
 
-    # def _parse_holds_list(self, content):
-    #     """
-    #     Private method for parsing hold response.
-    #     """
-    #     doc = pq(content)
-    #     hold_rows = doc('.patFuncEntry')
-    #     def _get(chunk, selector):
-    #         """
-    #         little util to get text by css selector.
-    #         """
-    #         return chunk.cssselect('td.%s' % selector)[0].text_content().strip()
-    #     holds = [
-    #         {
-    #              'key': row.cssselect('input')[0].attrib['id'],
-    #              'title': _get(row, 'patFuncTitle'),
-    #              'status': _get(row, 'patFuncStatus'),
-    #              'pickup': _get(row, 'patFuncPickup'),
-    #              'cancel_by': _get(row, 'patFuncCancel')
-    #         }
-    #         for row in hold_rows
-    #     ]
-    #     return holds
-
     def get_items(self, bib):
         """
         Get the item numbers linked to a bib record.  If no item number is
@@ -155,47 +131,6 @@ class IIIAccount():
             _k['status'] = status
             out.append(_k)
         return out
-
-    # def get_items(self, bib):
-    #     """
-    #     Get the item numbers linked to a bib record.  If no item number is
-    #     returned, this item isn't requestable.
-    #     """
-    #     url = self.request_base.replace('{{bib}}', bib)
-    #     payload = {
-    #         'name' : self.name,
-    #         'code' : self.barcode,
-    #         'pat_submit':'xxx',
-    #         'neededby_Month': '2',
-    #         'neededby_Day': '1',
-    #         'neededby_Year': '2011',
-    #         'submit': 'SUBMIT',
-    #         'loc': 'ROCK',
-    #         #inum is optional
-    #     }
-    #     r = requests.post(url,
-    #                       data=payload,
-    #                       cookies=self.cookies)
-    #     doc = pq(r.content)
-    #     rows =  doc('tr.bibItemsEntry')
-    #     out = []
-    #     for r in rows:
-    #         _k = {}
-    #         cells = r.cssselect('td')
-    #         try:
-    #             item_num = cells[0].cssselect('input[type="radio"]')[0].attrib['value']
-    #         except IndexError:
-    #             item_num = None
-    #         item, loc, call, status, barcode = tuple([c.text_content().strip().replace('\n', '') for c in cells])
-    #         _k['id'] = item_num
-    #         _k['location'] = loc
-    #         _k['callnumber'] = call
-    #         _k['status'] = status
-    #         #_k['barcode'] = barcode
-    #         #print i.value
-    #         #print i.text
-    #         out.append(_k)
-    #     return out
 
     def place_hold(self, bib, item, pickup_location="ROCK"):
         """
@@ -240,17 +175,17 @@ class IIIAccount():
         """
         Helper for parsing confirmation screen.
         """
+        content = content if ( type(content) == unicode ) else content.decode( 'utf-8', 'replace' )
         out = {
-           'confirmed': False,
-           'message': None
-           }
-        doc = pq(content)
+            'confirmed': False,
+            'message': None }
+        doc = BeautifulSoup( content )
         try:
-            msg = doc('.style1')[0].text_content().encode('utf-8')
+            msg = unicode( doc.find_all( 'span', class_='style1' )[0] )
         except IndexError:
-            msg = doc('p font[color="red"]').text()
-            out['message'] = msg
             #These are failures.
+            msg = doc.find( 'font', attrs={'color': 'red', 'size': '+2'} ).get_text( strip=True )
+            out['message'] = msg
             return out
         try:
             msg.index('was successful')
@@ -308,27 +243,10 @@ class IIIAccount():
     def cancel_all_holds(self):
         """
         Cancel all of a patron's holds.
+        TODO: write test and re-implement.
+        Initial implementation at <https://github.com/Brown-University-Library/josiah-patron-accounts/blob/6ca4280ec46c7a91584ca7e994faeb9dd1c87203/iii_account/iii_account.py>
         """
-        payload = {
-                   'currentsortorder':'current_pickup',
-                   'currentsortorder':'current_pickup',
-                   'cancelall':'YES'
-                }
-
-        out = {}
-        out['cancelled'] = False
-
-        url = self.opac_url + 'patroninfo~S7/%s/holds' % self.patron_id
-        r = requests.post(url,
-                          data=payload,
-                          cookies=self.cookies)
-        doc = pq(r.content)
-        no = doc('#patron_functions').text()
-        if no.rfind('No holds found'):
-            out['cancelled'] = True
-            return out
-        else:
-            return out
+        pass
 
     def get_checkouts(self):
         """
@@ -347,21 +265,22 @@ class IIIAccount():
         """
         Parse a given user's current checkouts.
         """
-        doc = pq(content)
-        t_rows = doc('.patFuncEntry')
+        content = content if type(content) == unicode else content.decode( 'utf-8', 'replace' )
+        doc = BeautifulSoup( content )
+        t_rows = doc.find_all( 'tr', class_='patFuncEntry' )
         def _get(chunk, selector):
             """
             little util to get text by css selector.
             """
-            return chunk.cssselect('td.%s' % selector)[0].text_content().strip()
+            return chunk.select('td.%s' % selector)[0].get_text(strip=True)
         checkouts = [
             {
-                 'key': row.cssselect('input')[0].attrib['id'],
-                 'item': row.cssselect('input')[0].attrib['value'],
-                 'title': _get(row, 'patFuncTitle'),
-                 'barcode': _get(row, 'patFuncBarcode'),
-                 'status': _get(row, 'patFuncStatus'),
-                 'call_number': _get(row, 'patFuncCallNo'),
+                'key': unicode( row.select('input[id]')[0]['id'] ),
+                'item': unicode( row.select('input[value]')[0]['value'] ),
+                'title': _get(row, 'patFuncTitle'),
+                'barcode': _get(row, 'patFuncBarcode'),
+                'status': _get(row, 'patFuncStatus'),
+                'call_number': _get(row, 'patFuncCallNo'),
             }
             for row in t_rows
         ]
@@ -393,33 +312,6 @@ class IIIAccount():
     def get_fines(self):
         """
         Parse the odd fines table.
+        TODO: consider implementing via the patron-api.
         """
-        #https://josiah.brown.edu/patroninfo~S7/x/overdues
-        url = self.opac_url + 'patroninfo/%s/overdues' % self.patron_id
-        r = requests.get(url,
-                         cookies=self.cookies)
-        doc = pq(r.content)
-        out = {}
-        out['total'] = doc('.patFuncFinesTotalAmt').text()
-        fines = doc('table.patFunc tr')
-        label = None
-        amount = None
-        fine_data = []
-        #Skipping first row since it's a header and last row because it's the
-        #total
-        for fine in fines[1:-1]:
-            val = doc(fine).text()
-            if val.rfind('$') > -1:
-                amount = val
-            else:
-                label = val
-
-            if label and amount:
-                fine_data.append(
-                                 {'label': label,
-                                 'amount': amount})
-                label = None
-                amount = None
-
-        out['fines'] = fine_data
-        return out
+        pass

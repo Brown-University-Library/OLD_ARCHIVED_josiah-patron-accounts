@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='josiah-patron-accounts',
-    version='0.2-dev',
+    version='0.3-dev',
     packages=find_packages(),
-    install_requires=[ u'pyquery==1.2.9', u'requests==2.7.0' ],
+    install_requires=[ u'beautifulsoup4==4.3.2', u'requests==2.7.0' ],
 )
