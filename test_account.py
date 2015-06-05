@@ -113,7 +113,12 @@ def test_get_items():
     bib = 'b2305331'
     # Get the items available for requesting.
     items = sess.get_items(bib)
-    assert items == [{'callnumber': 'PS3568.U812 R57x 1994', 'id': 'i11425642', 'location': 'ROCK', 'status': 'AVAILABLE'}]
+    assert items == [ {
+        'barcode': u'31236011741298',
+        'callnumber': 'PS3568.U812 R57x 1994',
+        'id': 'i11425642',
+        'location': 'ROCK',
+        'status': 'AVAILABLE'} ]
     sess.logout()
 
 
