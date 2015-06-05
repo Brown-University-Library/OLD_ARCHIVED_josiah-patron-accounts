@@ -114,8 +114,7 @@ def test_get_items():
     # Get the items available for requesting.
     items = sess.get_items(bib)
     assert items == [ {
-        'barcode': u'3 1236 01174 1298',
-        'barcode_contiguous': u'31236011741298',
+        'barcode': u'31236011741298',
         'callnumber': 'PS3568.U812 R57x 1994',
         'id': 'i11425642',
         'location': 'ROCK',
