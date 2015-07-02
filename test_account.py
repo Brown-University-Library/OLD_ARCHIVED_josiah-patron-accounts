@@ -72,6 +72,20 @@ def test_complete_hold():
     sess.logout()
 
 
+#For now - this is expected to fail.
+@pytest.mark.xfail
+@bul_vcr.use_cassette('grad-hold-open-circ-annex.yaml')
+def test_place_hold_annex():
+    """ Tests known requestable item from Annex. """
+    sess = IIIAccount(name, barcode)
+    sess.login()
+    bib = 'b4069600'
+    item = 'i117883608'  # year 1996, volume 53, from <http://josiah.brown.edu/record=b4069600>
+    hold = sess.place_hold(bib, item)
+    print json.dumps(hold, indent=2)
+    sess.logout()
+
+
 @bul_vcr.use_cassette('get-holds.yaml')
 def test_get_holds():
     sess = IIIAccount(name, barcode)
