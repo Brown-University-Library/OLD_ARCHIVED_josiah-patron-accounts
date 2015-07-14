@@ -80,7 +80,7 @@ def test_place_hold_annex():
     sess = IIIAccount(name, barcode)
     sess.login()
     bib = 'b4069600'
-    item = 'i117883608'  # year 1996, volume 53, from <http://josiah.brown.edu/record=b4069600>
+    item = 'i11788360'  # year 1996, volume 53, from <http://josiah.brown.edu/record=b4069600>
     hold = sess.place_hold(bib, item)
     print json.dumps(hold, indent=2)
     sess.logout()
