@@ -18,10 +18,34 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 log.info( 'hold_placer log started' )
 
+
 ## vars
 LAST_NAME = os.environ['iii_bjd__LAST_NAME']
 BARCODE = os.environ['iii_bjd__BARCODE']
 OPAC_URL = 'https://josiah.brown.edu/'
+BIB = 'b4069600'
+ITEM = 'i117883608'  # year 1996, volume 53, from <http://josiah.brown.edu/record=b4069600>
+PICKUP_LOCATION = 'ROCK'
+
+
+# ## submit hold
+# session = requests.Session()
+# url_a = OPAC_URL + 'search~S7?/.{{bib}}/.{{bib}}/1%2C1%2C1%2CB/request~{{bib}}'
+# url = url_a.replace( '{{bib}}', BIB )
+# log.debug( 'initial hold url, `%s`' % url )
+# payload = {
+#     'locx00': 'r0001',
+#     'radio': 'i11788360',
+#     'name': LAST_NAME,
+#     'code': BARCODE,
+#     'pat_submit': 'Request item',
+#     'submit': 'Submit',
+#     }
+# rsp = session.post( url, data=payload, allow_redirects=True, verify=False )
+# log.debug( 'actual hold url, `%s`' % url )
+# doc = BeautifulSoup( rsp.content.decode('utf-8') )
+# log.debug( 'hold rsp doc, ```%s```' % doc.prettify() )
+
 
 ## login
 work_dct = {
@@ -40,7 +64,7 @@ log.debug( 'payload, `%s`' % pprint.pformat(payload) )
 rsp = session.post( url, data=payload, allow_redirects=True, verify=False )
 log.debug( 'rsp.url, `%s`' % rsp.url )
 doc = BeautifulSoup( rsp.content.decode('utf-8') )
-log.debug( '- doc, ```%s```' % doc.prettify() )  # doc.prettify() output is unicode
+log.debug( 'login rsp doc, ```%s```' % doc.prettify() )  # doc.prettify() output is unicode
 login_error = doc.find( "span", class_="login_error" )  # <span class="login_error"> exists if login fails
 if (login_error):
     raise Exception("Login failed.")
@@ -52,3 +76,41 @@ log.debug( 'rsp.url, `%s`' % rsp.url )
 if 'logged into staff mode' in rsp.content.lower():
     work_dct['staff_mode'] = True
 log.debug( 'work_dct, `%s`' % pprint.pformat(work_dct) )
+
+
+## submit hold
+# session = requests.Session()
+url_a = OPAC_URL + 'search~S7?/.{{bib}}/.{{bib}}/1%2C1%2C1%2CB/request~{{bib}}'
+url = url_a.replace( '{{bib}}', BIB )
+log.debug( 'initial hold url, `%s`' % url )
+payload = {
+    'locx00': 'r0001',
+    'radio': 'i11788360',
+    'name': LAST_NAME,
+    'code': BARCODE,
+    'pat_submit': 'Request item',
+    'submit': 'Submit',
+    }
+rsp = session.post( url, data=payload, allow_redirects=True, verify=False )
+log.debug( 'actual hold url, `%s`' % url )
+doc = BeautifulSoup( rsp.content.decode('utf-8') )
+log.debug( 'hold rsp doc, ```%s```' % doc.prettify() )
+
+
+# ## submit hold
+# url_a = OPAC_URL + 'search~S7?/.{{bib}}/.{{bib}}/1%2C1%2C1%2CB/request~{{bib}}'
+# url = url_a.replace( '{{bib}}', BIB )
+# log.debug( 'initial hold url, `%s`' % url )
+# payload = {
+#     'name': LAST_NAME,
+#     'code': BARCODE,
+#     'pat_submit': 'Request item',
+#     'submit': 'SUBMIT',
+#     'loc': PICKUP_LOCATION,
+#     'radio': ITEM,
+#     'inst': "Test request.  Don't deliver."
+#     }
+# rsp = session.post( url, data=payload, allow_redirects=True, verify=False )
+# log.debug( 'actual hold url, `%s`' % url )
+# doc = BeautifulSoup( rsp.content.decode('utf-8') )
+# log.debug( 'hold rsp doc, ```%s```' % doc.prettify() )
