@@ -133,44 +133,81 @@ class IIIAccount():
             out.append(_k)
         return out
 
-    def place_hold(self, bib, item, pickup_location="ROCK"):
-        """
-        Place actual hold given bib and item.
-
-        Article request for storage materials
-        radio:i15976170
-        inst:1)eppn
-        2)12 1 2010
-        3)6-13
-        4)Don't deliver.  Test request.
-        extpatid:
-        extpatpw:
-        name:
-        code:
-        pat_submit:Request Article
-        """
+    def place_hold( self, bib, item, pickup_location='ROCK', availability_location=None ):
+        """ Place actual hold given bib and item. """
         out = {}
         out['bib'] = bib
         out['item'] = item
         url = self.request_base.replace('{{bib}}', bib)
-        payload = {
-            'name' : self.name,
-            'code' : self.barcode,
-            'pat_submit':'xxx',
-            'neededby_Month': 5,
-            'neededby_Day': 6,
-            'neededby_Year': 2015,
-            'submit': 'SUBMIT',
-            'loc': pickup_location,
-            'radio': item,
-            'inst': "Test request.  Don't deliver."
-        }
+        payload = self.prep_hold_payload( availability_location )
         #post it
         rsp = self.session.post(url, data=payload)
         #Check for success message
         confirm_status = self._parse_hold_confirmation(rsp.content)
         out.update(confirm_status)
         return out
+
+    def prep_hold_payload( self, bib, item, pickup_location, availability_location ):
+        """ Returns appropriate payload dct. """
+        if availability_location.lower() == 'annex':
+            payload = {
+                'locx00': 'r0001',
+                'radio': item,
+                'name': self.name,
+                'code': self.barcode,
+                'pat_submit': 'Request item',
+                'submit': 'Submit' }
+        else:
+            payload = {
+                'name' : self.name,
+                'code' : self.barcode,
+                'pat_submit':'xxx',
+                'neededby_Month': 12,
+                'neededby_Day': 30,
+                'neededby_Year': 2015,
+                'submit': 'SUBMIT',
+                'loc': pickup_location,
+                'radio': item }
+        return payload
+
+    # def place_hold(self, bib, item, pickup_location="ROCK"):
+    #     """
+    #     Place actual hold given bib and item.
+
+    #     Article request for storage materials
+    #     radio:i15976170
+    #     inst:1)eppn
+    #     2)12 1 2010
+    #     3)6-13
+    #     4)Don't deliver.  Test request.
+    #     extpatid:
+    #     extpatpw:
+    #     name:
+    #     code:
+    #     pat_submit:Request Article
+    #     """
+    #     out = {}
+    #     out['bib'] = bib
+    #     out['item'] = item
+    #     url = self.request_base.replace('{{bib}}', bib)
+    #     payload = {
+    #         'name' : self.name,
+    #         'code' : self.barcode,
+    #         'pat_submit':'xxx',
+    #         'neededby_Month': 5,
+    #         'neededby_Day': 6,
+    #         'neededby_Year': 2015,
+    #         'submit': 'SUBMIT',
+    #         'loc': pickup_location,
+    #         'radio': item,
+    #         'inst': "Test request.  Don't deliver."
+    #     }
+    #     #post it
+    #     rsp = self.session.post(url, data=payload)
+    #     #Check for success message
+    #     confirm_status = self._parse_hold_confirmation(rsp.content)
+    #     out.update(confirm_status)
+    #     return out
 
     def _parse_hold_confirmation(self, content):
         """
