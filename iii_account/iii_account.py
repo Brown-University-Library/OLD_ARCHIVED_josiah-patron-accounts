@@ -142,7 +142,7 @@ class IIIAccount():
         payload = self.prep_hold_payload( bib, item, pickup_location, availability_location )
         #post it
         rsp = self.session.post(url, data=payload)
-        log.debug( u'rsp.content, ```%s```' % rsp.content.decode(u'utf-8') )
+        # log.debug( u'rsp.content, ```%s```' % rsp.content.decode(u'utf-8') )
         #Check for success message
         confirm_status = self._parse_hold_confirmation(rsp.content)
         out.update(confirm_status)
@@ -150,7 +150,7 @@ class IIIAccount():
 
     def prep_hold_payload( self, bib, item, pickup_location, availability_location ):
         """ Returns appropriate payload dct. """
-        log.debug( u'availability_location, `%s`' % availability_location )
+        # log.debug( u'availability_location, `%s`' % availability_location )
         if availability_location and availability_location.lower() == 'annex':
             payload = {
                 'locx00': 'r0001',
@@ -170,47 +170,8 @@ class IIIAccount():
                 'submit': 'SUBMIT',
                 'loc': pickup_location,
                 'radio': item }
-        log.debug( u'hold payload, `%s`' % pprint.pformat(payload) )
+        # log.debug( u'hold payload, `%s`' % pprint.pformat(payload) )
         return payload
-
-    # def place_hold(self, bib, item, pickup_location="ROCK"):
-    #     """
-    #     Place actual hold given bib and item.
-
-    #     Article request for storage materials
-    #     radio:i15976170
-    #     inst:1)eppn
-    #     2)12 1 2010
-    #     3)6-13
-    #     4)Don't deliver.  Test request.
-    #     extpatid:
-    #     extpatpw:
-    #     name:
-    #     code:
-    #     pat_submit:Request Article
-    #     """
-    #     out = {}
-    #     out['bib'] = bib
-    #     out['item'] = item
-    #     url = self.request_base.replace('{{bib}}', bib)
-    #     payload = {
-    #         'name' : self.name,
-    #         'code' : self.barcode,
-    #         'pat_submit':'xxx',
-    #         'neededby_Month': 5,
-    #         'neededby_Day': 6,
-    #         'neededby_Year': 2015,
-    #         'submit': 'SUBMIT',
-    #         'loc': pickup_location,
-    #         'radio': item,
-    #         'inst': "Test request.  Don't deliver."
-    #     }
-    #     #post it
-    #     rsp = self.session.post(url, data=payload)
-    #     #Check for success message
-    #     confirm_status = self._parse_hold_confirmation(rsp.content)
-    #     out.update(confirm_status)
-    #     return out
 
     def _parse_hold_confirmation(self, content):
         """
@@ -260,13 +221,13 @@ class IIIAccount():
         r = self.session.post(url, data=payload)
         elapsed = 0
         while True:
-            log.debug("Attempting to verify canceled hold.")
+            # log.debug("Attempting to verify canceled hold.")
             #Get all the holds and verify that this key isn't in the current hold set.
             current_holds = [h['key'] for h in self.get_holds()]
             #These are failures.
             if cancel_key in current_holds:
                 # Wait a second
-                log.debug("Waiting for one second.")
+                # log.debug("Waiting for one second.")
                 time.sleep(1)
                 elapsed += 1
                 pass
