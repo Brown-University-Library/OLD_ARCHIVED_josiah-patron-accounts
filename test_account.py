@@ -52,7 +52,7 @@ def test_login_bad():
         sess.login()  # should raise error
     except Exception as e:
         exception = repr(e)
-    assert exception == "Exception('Login failed.',)"
+    assert exception == "Exception(u'Login failed.',)"
     assert sess.patron_id == None
 
 

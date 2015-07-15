@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 __title__ = 'iii_account'
 
 from .iii_account import IIIAccount

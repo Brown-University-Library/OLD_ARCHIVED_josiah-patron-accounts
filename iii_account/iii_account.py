@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import logging
 import pprint
 import requests
@@ -129,7 +130,7 @@ class IIIAccount():
             _k['location'] = loc
             _k['callnumber'] = call
             _k['status'] = status
-            _k['barcode'] = barcode.replace( u' ', u'' )
+            _k['barcode'] = barcode.replace( ' ', '' )
             out.append(_k)
         return out
 
@@ -142,7 +143,7 @@ class IIIAccount():
         payload = self.prep_hold_payload( bib, item, pickup_location, availability_location )
         #post it
         rsp = self.session.post(url, data=payload)
-        # log.debug( u'rsp.content, ```%s```' % rsp.content.decode(u'utf-8') )
+        # log.debug( 'rsp.content, ```%s```' % rsp.content.decode('utf-8') )
         #Check for success message
         confirm_status = self._parse_hold_confirmation(rsp.content)
         out.update(confirm_status)
@@ -150,7 +151,7 @@ class IIIAccount():
 
     def prep_hold_payload( self, bib, item, pickup_location, availability_location ):
         """ Returns appropriate payload dct. """
-        # log.debug( u'availability_location, `%s`' % availability_location )
+        # log.debug( 'availability_location, `%s`' % availability_location )
         if availability_location and availability_location.lower() == 'annex':
             payload = {
                 'locx00': 'r0001',
@@ -170,7 +171,7 @@ class IIIAccount():
                 'submit': 'SUBMIT',
                 'loc': pickup_location,
                 'radio': item }
-        # log.debug( u'hold payload, `%s`' % pprint.pformat(payload) )
+        # log.debug( 'hold payload, `%s`' % pprint.pformat(payload) )
         return payload
 
     def _parse_hold_confirmation(self, content):
