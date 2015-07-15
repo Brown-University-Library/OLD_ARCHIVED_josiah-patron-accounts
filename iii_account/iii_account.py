@@ -139,9 +139,10 @@ class IIIAccount():
         out['bib'] = bib
         out['item'] = item
         url = self.request_base.replace('{{bib}}', bib)
-        payload = self.prep_hold_payload( availability_location )
+        payload = self.prep_hold_payload( bib, item, pickup_location, availability_location )
         #post it
         rsp = self.session.post(url, data=payload)
+        log.debug( u'rsp.content, ```%s```' % rsp.content.decode(u'utf-8') )
         #Check for success message
         confirm_status = self._parse_hold_confirmation(rsp.content)
         out.update(confirm_status)
@@ -149,7 +150,8 @@ class IIIAccount():
 
     def prep_hold_payload( self, bib, item, pickup_location, availability_location ):
         """ Returns appropriate payload dct. """
-        if availability_location.lower() == 'annex':
+        log.debug( u'availability_location, `%s`' % availability_location )
+        if availability_location and availability_location.lower() == 'annex':
             payload = {
                 'locx00': 'r0001',
                 'radio': item,
@@ -168,6 +170,7 @@ class IIIAccount():
                 'submit': 'SUBMIT',
                 'loc': pickup_location,
                 'radio': item }
+        log.debug( u'hold payload, `%s`' % pprint.pformat(payload) )
         return payload
 
     # def place_hold(self, bib, item, pickup_location="ROCK"):

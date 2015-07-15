@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-''' Sequentially goes through steps of placing a hold to determine failure point. '''
+""" Sequentially goes through steps of placing a hold to determine Annex-hold failure point.
+    Note: Testing indicates that initial login is not needed.
+          Am doing it here to mimic standard library flow.
+    Note: This code works; indicates payload must be different for Annex requests. """
 
 from __future__ import unicode_literals
 import logging, os, pprint, sys
@@ -26,25 +29,6 @@ OPAC_URL = 'https://josiah.brown.edu/'
 BIB = 'b4069600'
 ITEM = 'i117883608'  # year 1996, volume 53, from <http://josiah.brown.edu/record=b4069600>
 PICKUP_LOCATION = 'ROCK'
-
-
-# ## submit hold
-# session = requests.Session()
-# url_a = OPAC_URL + 'search~S7?/.{{bib}}/.{{bib}}/1%2C1%2C1%2CB/request~{{bib}}'
-# url = url_a.replace( '{{bib}}', BIB )
-# log.debug( 'initial hold url, `%s`' % url )
-# payload = {
-#     'locx00': 'r0001',
-#     'radio': 'i11788360',
-#     'name': LAST_NAME,
-#     'code': BARCODE,
-#     'pat_submit': 'Request item',
-#     'submit': 'Submit',
-#     }
-# rsp = session.post( url, data=payload, allow_redirects=True, verify=False )
-# log.debug( 'actual hold url, `%s`' % url )
-# doc = BeautifulSoup( rsp.content.decode('utf-8') )
-# log.debug( 'hold rsp doc, ```%s```' % doc.prettify() )
 
 
 ## login
@@ -95,22 +79,3 @@ rsp = session.post( url, data=payload, allow_redirects=True, verify=False )
 log.debug( 'actual hold url, `%s`' % url )
 doc = BeautifulSoup( rsp.content.decode('utf-8') )
 log.debug( 'hold rsp doc, ```%s```' % doc.prettify() )
-
-
-# ## submit hold
-# url_a = OPAC_URL + 'search~S7?/.{{bib}}/.{{bib}}/1%2C1%2C1%2CB/request~{{bib}}'
-# url = url_a.replace( '{{bib}}', BIB )
-# log.debug( 'initial hold url, `%s`' % url )
-# payload = {
-#     'name': LAST_NAME,
-#     'code': BARCODE,
-#     'pat_submit': 'Request item',
-#     'submit': 'SUBMIT',
-#     'loc': PICKUP_LOCATION,
-#     'radio': ITEM,
-#     'inst': "Test request.  Don't deliver."
-#     }
-# rsp = session.post( url, data=payload, allow_redirects=True, verify=False )
-# log.debug( 'actual hold url, `%s`' % url )
-# doc = BeautifulSoup( rsp.content.decode('utf-8') )
-# log.debug( 'hold rsp doc, ```%s```' % doc.prettify() )
