@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 
 import json
 import os
@@ -8,16 +9,19 @@ import vcr
 
 from iii_account import IIIAccount
 
-name, barcode = ( os.environ[u'iii_TEST_NAME'], os.environ[u'iii_TEST_BARCODE'] )
+
+name, barcode = ( os.environ['iii_TEST_NAME'], os.environ['iii_TEST_BARCODE'] )
+
 
 # Show logging
 import logging
-formatter = logging.Formatter(u'%(asctime)s - %(levelname)s - %(funcName)s()::%(lineno)d - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(funcName)s()::%(lineno)d - %(message)s')
 logger = logging.getLogger('iii_account')
 logger.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
+
 
 # Custom VCR config.
 bul_vcr = vcr.VCR(
@@ -33,7 +37,9 @@ bul_vcr = vcr.VCR(
 def test_login():
     sess = IIIAccount(name, barcode)
     #These should raise errors if login fails.
+    assert sess.patron_id == None
     sess.login()
+    assert len( sess.patron_id ) == 7
     sess.logout()
 
 
@@ -47,6 +53,7 @@ def test_login_bad():
     except Exception as e:
         exception = repr(e)
     assert exception == "Exception('Login failed.',)"
+    assert sess.patron_id == None
 
 
 @bul_vcr.use_cassette('checkouts.yaml')
@@ -100,8 +107,9 @@ def test_cancel_hold():
     cancel_key = 'canceli11425642x00'
     sess = IIIAccount(name, barcode)
     sess.login()
-    canceled = sess.cancel_hold(cancel_key)
-    print json.dumps(canceled, indent=2)
+    canceled_output = sess.cancel_hold(cancel_key)
+    assert canceled_output['cancelled'] == True
+    print json.dumps(canceled_output, indent=2)
     sess.logout()
 
 
@@ -128,7 +136,7 @@ def test_get_items():
     # Get the items available for requesting.
     items = sess.get_items(bib)
     assert items == [ {
-        'barcode': u'31236011741298',
+        'barcode': '31236011741298',
         'callnumber': 'PS3568.U812 R57x 1994',
         'id': 'i11425642',
         'location': 'ROCK',
