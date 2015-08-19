@@ -151,7 +151,7 @@ class IIIAccount():
 
     def prep_hold_payload( self, bib, item, pickup_location, availability_location ):
         """ Returns appropriate payload dct. """
-        # log.debug( 'availability_location, `%s`' % availability_location )
+        log.debug( 'availability_location, `%s`' % availability_location )
         if availability_location and availability_location.lower() == 'annex':
             payload = {
                 'code': self.barcode,
@@ -173,7 +173,7 @@ class IIIAccount():
                 'radio': item,
                 'submit': 'SUBMIT',
                 }
-        # log.debug( 'hold payload, `%s`' % pprint.pformat(payload) )
+        log.debug( 'hold payload, `%s`' % pprint.pformat(payload) )
         return payload
 
     def _parse_hold_confirmation(self, content):
