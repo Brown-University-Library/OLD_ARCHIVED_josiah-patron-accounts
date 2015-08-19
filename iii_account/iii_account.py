@@ -154,23 +154,25 @@ class IIIAccount():
         # log.debug( 'availability_location, `%s`' % availability_location )
         if availability_location and availability_location.lower() == 'annex':
             payload = {
-                'locx00': 'r0001',
-                'radio': item,
-                'name': self.name,
                 'code': self.barcode,
+                'locx00': pickup_location,  # was 'r0001'
+                'name': self.name,
                 'pat_submit': 'Request item',
-                'submit': 'Submit' }
+                'radio': item,
+                'submit': 'Submit',
+                }
         else:
             payload = {
-                'name' : self.name,
                 'code' : self.barcode,
-                'pat_submit':'xxx',
-                'neededby_Month': 12,
-                'neededby_Day': 30,
-                'neededby_Year': 2015,
-                'submit': 'SUBMIT',
                 'loc': pickup_location,
-                'radio': item }
+                'name' : self.name,
+                'neededby_Day': 30,
+                'neededby_Month': 12,
+                'neededby_Year': 2015,
+                'pat_submit':'xxx',
+                'radio': item,
+                'submit': 'SUBMIT',
+                }
         # log.debug( 'hold payload, `%s`' % pprint.pformat(payload) )
         return payload
 
