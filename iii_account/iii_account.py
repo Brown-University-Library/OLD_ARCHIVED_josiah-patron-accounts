@@ -5,7 +5,7 @@ import requests
 import time
 from bs4 import BeautifulSoup
 
-OPAC_BASE_URL = 'https://josiah.brown.edu/'
+OPAC_BASE_URL = 'https://catalog.library.brown.edu/'
 
 log = logging.getLogger(__name__)
 
